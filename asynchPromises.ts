@@ -30,3 +30,45 @@ async function exampleUsage() {
 
 // Appel de la fonction exampleUsage pour démarrer l'exemple
 exampleUsage();
+
+
+// Un autre exemple pour la fonction joueSon
+
+function jouerListeSonsSimultanément(urls, cb) {
+    // Créer une promesse pour chaque son à jouer
+    const promises = urls.map(url => jouerSonPromise(url));
+
+    // Attendre que toutes les promesses soient résolues
+    Promise.all(promises)
+        .then(() => {
+            // Tous les sons ont été joués, appeler le callback
+            cb();
+        })
+        .catch(error => {
+            // Gérer les erreurs
+            console.error("Une erreur s'est produite lors de la lecture des sons :", error);
+        });
+}
+
+function jouerSonPromise(url) {
+    return new Promise((resolve, reject) => {
+        jouerSon(url, () => {
+            resolve(); // Résoudre la promesse une fois que le son est terminé
+        });
+    });
+}
+
+function jouerSon(url, cb) {
+    console.log(`Début de la lecture du son ${url}`);
+    setTimeout(() => {
+        console.log(`Fin de la lecture du son ${url}`);
+        cb();
+    }, 500 + Math.random() * 1000);
+}
+
+// Exemple d'utilisation :
+const urls = ['url1.mp3', 'url2.mp3', 'url3.mp3'];
+jouerListeSonsSimultanément(urls, () => {
+    console.log('Tous les sons ont été lus.');
+});
+
